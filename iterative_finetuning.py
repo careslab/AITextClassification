@@ -46,10 +46,10 @@ class IterativeFineTuner:
 
         #encode the labels 
         label_encoder = LabelEncoder()
-        df["label_id"] = label_encoder.fit_transform(df["label"])
+        df["label"] = label_encoder.fit_transform(df["label"])
         print("🔑 Labels encoded successfully ✅")
         #convert datafram in dataset
-        dataset = Dataset.from_pandas(df[["text", "label_id"]])
+        dataset = Dataset.from_pandas(df[["text", "label"]])
         #split the dataset in train and test
         dataset = dataset.train_test_split(test_size=0.1)
         print("📊 Dataset split into train and test sets ✅")
@@ -224,8 +224,8 @@ class IterativeFineTuner:
                 self.nb_epochs = 3
             else :
                 print(f"👩‍💻 Fine-tuning iteration {iteration_cnt}")
-                self.model_name = f"{iteration_cnt}_finetuned_roberta"
-                self.model_dir = f"./{iteration_cnt+1}_finetuned_roberta"
+                self.model_name = f"./{iteration_cnt-1}_finetuned_roberta"
+                self.model_dir = f"./{iteration_cnt}_finetuned_roberta"
                 self.learning_rate = 1e-5
                 self.nb_epochs = 2
 
