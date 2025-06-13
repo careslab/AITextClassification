@@ -1,10 +1,8 @@
-
-
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from datasets import Dataset
-from transformers import DistilBertTokenizerFast, DistilBertForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
 from sklearn.metrics import accuracy_score
 import torch
 
@@ -23,7 +21,7 @@ dataset = Dataset.from_pandas(df[["text", "label_id"]])
 dataset = dataset.train_test_split(test_size=0.1)
 
 # 2. Tokenisation des textes
-tokenizer = DistilBertTokenizerFast.from_pretrained("distilbert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
 # Fonction de tokenisation des textes
 def tokenize(batch):
@@ -33,7 +31,7 @@ def tokenize(batch):
 tokenized_dataset = dataset.map(tokenize, batched=True)
 
 # 3. Charger le modèle pré-entraîné DistilBERT pour la classification
-model = DistilBertForSequenceClassification.from_pretrained(
+model = AutoModelForSequenceClassification.from_pretrained(
     "distilbert-base-uncased",
     num_labels=len(label_encoder.classes_)  # Nombre de classes à prédire
 )
