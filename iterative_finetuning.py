@@ -14,8 +14,8 @@ import sys
 
 class IterativeFineTuner:
     def __init__ (self):
-        self.training_filename = "training_file.csv"
-        self.testing_filename = "testing_file.csv"
+        self.training_filename = "./data/training_file.csv"
+        self.testing_filename = "./data/testing_file.csv"
         self.model_name = None
         self.model_dir = None
         self.learning_rate = None

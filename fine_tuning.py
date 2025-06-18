@@ -8,20 +8,20 @@ import torch
 
 # 1. Charger et préparer les données
 # Charger le fichier CSV avec les données
-df = pd.read_csv("dataset_medium.csv")  # Remplace le chemin par le bon fichier CSV
+df = pd.read_csv("./data/60k_voice_command.csv")  # Remplace le chemin par le bon fichier CSV
 
 # Encoder les labels (catégories) en entiers
 label_encoder = LabelEncoder()
-df["label_id"] = label_encoder.fit_transform(df["label"])
+df["label"] = label_encoder.fit_transform(df["label"])
 
 # Convertir le DataFrame en dataset Hugging Face
-dataset = Dataset.from_pandas(df[["text", "label_id"]])
+dataset = Dataset.from_pandas(df[["text", "label"]])
 
 # Diviser les données en train et test (90% train, 10% test)
 dataset = dataset.train_test_split(test_size=0.1)
 
 # 2. Tokenisation des textes
-tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("distilroberta-base")
 
 # Fonction de tokenisation des textes
 def tokenize(batch):
@@ -30,10 +30,10 @@ def tokenize(batch):
 # Appliquer la tokenisation sur le dataset
 tokenized_dataset = dataset.map(tokenize, batched=True)
 
-# 3. Charger le modèle pré-entraîné DistilBERT pour la classification
+# 3. Charger le modèle pour la classification
 model = AutoModelForSequenceClassification.from_pretrained(
-    "distilbert-base-uncased",
-    num_labels=len(label_encoder.classes_)  # Nombre de classes à prédire
+    "distilroberta-base",
+    num_labels=len(label_encoder.classes_)  
 )
 
 # 4. Définir les arguments d'entraînement
@@ -71,8 +71,8 @@ trainer = Trainer(
 trainer.train()
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./my_finetuned_model")  
-tokenizer.save_pretrained("./my_finetuned_model") 
+model.save_pretrained("./60k_finetuned_model")  
+tokenizer.save_pretrained("./60k_finetuned_model") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
     pickle.dump(label_encoder, f)  
