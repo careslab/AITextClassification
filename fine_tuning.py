@@ -39,7 +39,7 @@ model = AutoModelForSequenceClassification.from_pretrained(
 # 4. Définir les arguments d'entraînement
 training_args = TrainingArguments(
     output_dir="./results",  
-    evaluation_strategy="epoch",  
+    eval_strategy="epoch",  
     logging_strategy="epoch", 
     save_strategy="epoch",  
     num_train_epochs=5, 
@@ -71,8 +71,8 @@ trainer = Trainer(
 trainer.train()
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./60k_finetuned_model")  
-tokenizer.save_pretrained("./60k_finetuned_model") 
+model.save_pretrained("./data./60k_finetuned_model")  
+tokenizer.save_pretrained("./data./60k_finetuned_model") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
     pickle.dump(label_encoder, f)  
