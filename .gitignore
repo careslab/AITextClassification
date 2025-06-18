@@ -1,5 +1,6 @@
 .DS_Store
 Icon?
-# Ignorer tout le dossier data contenant les CSV lourds
-data/
+/data
+
+
 
