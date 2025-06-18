@@ -38,23 +38,23 @@ model = AutoModelForSequenceClassification.from_pretrained(
 
 # 4. Définir les arguments d'entraînement
 training_args = TrainingArguments(
-    output_dir="./results",  # Où enregistrer les résultats
-    evaluation_strategy="epoch",  # Évaluer après chaque époque
-    logging_strategy="epoch",  # Journaliser après chaque époque
-    save_strategy="epoch",  # Sauvegarder après chaque époque
-    num_train_epochs=5,  # Nombre d'époques
-    per_device_train_batch_size=16,  # Taille des lots d'entraînement
-    per_device_eval_batch_size=16,  # Taille des lots pour l'évaluation
-    learning_rate=2e-5,  # Taux d'apprentissage
-    weight_decay=0.01,  # Décroissance du poids pour éviter le surapprentissage
-    load_best_model_at_end=True,  # Charger le meilleur modèle à la fin de l'entraînement
-    metric_for_best_model="accuracy",  # Utiliser la précision comme critère pour le meilleur modèle
+    output_dir="./results",  
+    evaluation_strategy="epoch",  
+    logging_strategy="epoch", 
+    save_strategy="epoch",  
+    num_train_epochs=5, 
+    per_device_train_batch_size=16, 
+    per_device_eval_batch_size=16,  
+    learning_rate=2e-5,  
+    weight_decay=0.01,  
+    load_best_model_at_end=True,  
+    metric_for_best_model="accuracy",  
 )
 
 # 5. Calcul des métriques d'évaluation (précision)
 def compute_metrics(eval_pred):
     logits, labels = eval_pred
-    preds = np.argmax(logits, axis=-1)  # Prédictions finales en classes
+    preds = np.argmax(logits, axis=-1)  
     return {"accuracy": accuracy_score(labels, preds)}
 
 # 6. Créer l'objet Trainer
@@ -71,8 +71,8 @@ trainer = Trainer(
 trainer.train()
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./my_finetuned_model")  # Enregistrer le modèle fine-tuné
-tokenizer.save_pretrained("./my_finetuned_model")  # Enregistrer le tokenizer
+model.save_pretrained("./my_finetuned_model")  
+tokenizer.save_pretrained("./my_finetuned_model") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
-    pickle.dump(label_encoder, f)  # Sauvegarder l'encodeur de labels pour une utilisation future
+    pickle.dump(label_encoder, f)  
