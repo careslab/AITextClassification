@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 from sklearn.preprocessing import LabelEncoder
 from datasets import Dataset
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments
+from transformers import AutoTokenizer, AutoModelForSequenceClassification, Trainer, TrainingArguments, EarlyStoppingCallback
 from sklearn.metrics import accuracy_score
-import torch
+import matplotlib.pyplot as plt
+import json
+import os
 
 # 1. Charger et préparer les données
 # Charger le fichier CSV avec les données
@@ -18,7 +20,7 @@ df["label"] = label_encoder.fit_transform(df["label"])
 dataset = Dataset.from_pandas(df[["text", "label"]])
 
 # Diviser les données en train et test (90% train, 10% test)
-dataset = dataset.train_test_split(test_size=0.1)
+dataset = dataset.train_test_split(test_size=0.1, shuffle=True, seed=42))
 
 # 2. Tokenisation des textes
 tokenizer = AutoTokenizer.from_pretrained("distilroberta-base")
@@ -43,7 +45,7 @@ training_args = TrainingArguments(
     logging_strategy="epoch", 
     save_strategy="epoch",  
     num_train_epochs=5, 
-    per_device_train_batch_size=16, 
+    per_device_train_batch_size=64, 
     per_device_eval_batch_size=16,  
     learning_rate=2e-5,  
     weight_decay=0.01,  
@@ -65,6 +67,7 @@ trainer = Trainer(
     eval_dataset=tokenized_dataset["test"],
     tokenizer=tokenizer,
     compute_metrics=compute_metrics,
+    callbacks=[EarlyStoppingCallback(early_stopping_patience=2)]
 )
 
 # 7. Lancer l'entraînement du modèle
@@ -75,4 +78,70 @@ model.save_pretrained("./data./60k_finetuned_model")
 tokenizer.save_pretrained("./data./60k_finetuned_model") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
-    pickle.dump(label_encoder, f)  
+    pickle.dump(label_encoder, f)
+
+# Affichage des courbes de loss et d'accuracy pendant l'entraînement
+import matplotlib.pyplot as plt
+import json
+import os
+
+# Charger les logs de l'entraînement
+log_history = trainer.state.log_history
+
+# Extraire les epochs, les train loss et eval accuracy
+epochs = [entry["epoch"] for entry in log_history if "epoch" in entry and "loss" in entry]
+train_loss = [entry["loss"] for entry in log_history if "epoch" in entry and "loss" in entry]
+eval_acc = [entry["eval_accuracy"] for entry in log_history if "eval_accuracy" in entry]
+
+# Tracer la courbe de perte d'entraînement
+plt.figure(figsize=(10, 5))
+plt.plot(epochs, train_loss, label="Train Loss", marker="o")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Courbe de perte (Train)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Tracer la courbe de précision sur validation
+eval_epochs = [entry["epoch"] for entry in log_history if "eval_accuracy" in entry]
+plt.figure(figsize=(10, 5))
+plt.plot(eval_epochs, eval_acc, label="Eval Accuracy", marker="o", color="green")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.title("Précision sur le jeu de validation")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+
+
+# Affichage des courbes de loss et d'accuracy pendant l'entraînement
+# Charger les logs de l'entraînement
+log_history = trainer.state.log_history
+
+# Extraire les epochs, les train loss et eval accuracy
+epochs = [entry["epoch"] for entry in log_history if "epoch" in entry and "loss" in entry]
+train_loss = [entry["loss"] for entry in log_history if "epoch" in entry and "loss" in entry]
+eval_acc = [entry["eval_accuracy"] for entry in log_history if "eval_accuracy" in entry]
+
+# Tracer la courbe de perte d'entraînement
+plt.figure(figsize=(10, 5))
+plt.plot(epochs, train_loss, label="Train Loss", marker="o")
+plt.xlabel("Epoch")
+plt.ylabel("Loss")
+plt.title("Courbe de perte (Train)")
+plt.legend()
+plt.grid(True)
+plt.show()
+
+# Tracer la courbe de précision sur validation
+eval_epochs = [entry["epoch"] for entry in log_history if "eval_accuracy" in entry]
+plt.figure(figsize=(10, 5))
+plt.plot(eval_epochs, eval_acc, label="Eval Accuracy", marker="o", color="green")
+plt.xlabel("Epoch")
+plt.ylabel("Accuracy")
+plt.title("Précision sur le jeu de validation")
+plt.legend()
+plt.grid(True)
+plt.show() 

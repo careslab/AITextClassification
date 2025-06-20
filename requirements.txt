@@ -4,3 +4,6 @@ numpy
 scikit-learn
 datasets
 torch
+os
+matplotlib.pyplot
+json
