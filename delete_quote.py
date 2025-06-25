@@ -1,6 +1,6 @@
 import csv
 
-input_file = "./data/55k_voice_command.csv"
+input_file = "./data/60k_voice_command.csv"
 
 rows = []
 with open(input_file, "r", encoding="utf-8") as fin:

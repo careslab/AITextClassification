@@ -73,8 +73,8 @@ trainer = Trainer(
 trainer.train()
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./data./60k_finetuned_model")  
-tokenizer.save_pretrained("./data./60k_finetuned_model") 
+model.save_pretrained("./data./60k_finetuned_robertamodel")  
+tokenizer.save_pretrained("./data./60k_finetuned_robertamodel") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
     pickle.dump(label_encoder, f)
