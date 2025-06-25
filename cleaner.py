@@ -13,10 +13,12 @@ with open(input_file, "r", encoding="utf-8") as fin:
     for row in reader:
         # Nettoie chaque colonne
         cleaned_row = [clean_text(col) for col in row]
-        rows.append(cleaned_row)
+        # Ignore les lignes où toutes les colonnes sont vides ou contiennent juste ""
+        if not all(col.strip() == "" for col in cleaned_row):
+            rows.append(cleaned_row)
 
 with open(input_file, "w", encoding="utf-8", newline='') as fout:
     writer = csv.writer(fout)
     writer.writerows(rows)
 
-print(f"✅ Nettoyage terminé : seuls les lettres, espaces et virgules sont conservés dans {input_file}")
+print(f"✅ Nettoyage terminé : lignes vides supprimées et seuls les lettres, espaces et virgules sont conservés dans {input_file}")
