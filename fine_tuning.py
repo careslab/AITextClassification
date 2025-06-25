@@ -9,7 +9,6 @@ import json
 import os
 
 # 1. Charger et préparer les données
-# Charger le fichier CSV avec les données
 df = pd.read_csv("./data/60k_voice_command.csv")  # Remplace le chemin par le bon fichier CSV
 
 # Encoder les labels (catégories) en entiers
@@ -114,34 +113,3 @@ plt.legend()
 plt.grid(True)
 plt.show()
 
-
-
-# Affichage des courbes de loss et d'accuracy pendant l'entraînement
-# Charger les logs de l'entraînement
-log_history = trainer.state.log_history
-
-# Extraire les epochs, les train loss et eval accuracy
-epochs = [entry["epoch"] for entry in log_history if "epoch" in entry and "loss" in entry]
-train_loss = [entry["loss"] for entry in log_history if "epoch" in entry and "loss" in entry]
-eval_acc = [entry["eval_accuracy"] for entry in log_history if "eval_accuracy" in entry]
-
-# Tracer la courbe de perte d'entraînement
-plt.figure(figsize=(10, 5))
-plt.plot(epochs, train_loss, label="Train Loss", marker="o")
-plt.xlabel("Epoch")
-plt.ylabel("Loss")
-plt.title("Courbe de perte (Train)")
-plt.legend()
-plt.grid(True)
-plt.show()
-
-# Tracer la courbe de précision sur validation
-eval_epochs = [entry["epoch"] for entry in log_history if "eval_accuracy" in entry]
-plt.figure(figsize=(10, 5))
-plt.plot(eval_epochs, eval_acc, label="Eval Accuracy", marker="o", color="green")
-plt.xlabel("Epoch")
-plt.ylabel("Accuracy")
-plt.title("Précision sur le jeu de validation")
-plt.legend()
-plt.grid(True)
-plt.show() 
