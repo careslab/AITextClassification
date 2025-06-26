@@ -15,7 +15,7 @@ def load_list_from_csv(csv_path, size=100):
     response_list = sampled_df['label'].tolist()
     return prompt_list, response_list
 
-csv_file_path = "./dataset_large.csv"
+csv_file_path = "./data/dataset_large.csv"
 prompt_list, response_list = load_list_from_csv(csv_file_path)
 
 
@@ -26,7 +26,7 @@ if len(prompt_list) != len(response_list):
 nb_of_test = int(input("How many test do you want to do on this model ?\n"))
 
 # Load model and tokenizer
-model_path = "./finetuned_distilroberta"                                                                                                     ##### changes here the size!!!!
+model_path = "./data/60k_finetuned_robertamodel"                                                                                                     ##### changes here the size!!!!
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
@@ -45,7 +45,7 @@ def generate_with_transformers(prompt):
 
 
 # Prepare CSV file
-clean_model_name = "finetuned_distilroberta_fpt"                                                                                                     ##### changes here the size!!!!
+clean_model_name = "60k_finetuned_robertamodel"                                                                                                     ##### changes here the size!!!!
 csv_filename = f"{clean_model_name}_results.csv"
 
 incorrect_filename = f"{clean_model_name}_incorrect_predictions.csv"
