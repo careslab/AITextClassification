@@ -15,7 +15,7 @@ def load_list_from_csv(csv_path, size=100):
     response_list = sampled_df['label'].tolist()
     return prompt_list, response_list
 
-csv_file_path = "./data/dataset_large.csv"
+csv_file_path = "./data/training_file.csv"
 prompt_list, response_list = load_list_from_csv(csv_file_path)
 
 
