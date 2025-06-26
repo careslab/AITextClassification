@@ -70,19 +70,23 @@ trainer = Trainer(
 )
 
 # 7. Lancer l'entraînement du modèle
-trainer.train()
+train_output = trainer.train()
+
+# Afficher un message si l'early stopping a été utilisé
+if hasattr(trainer, "early_stopping") or any(
+    "early_stopping" in str(cb).lower() for cb in trainer.callback_handler.callbacks
+):
+    if train_output.training_loss is not None and trainer.state.is_world_process_zero:
+        print("Training was stopped because of the early stopping.")
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./data./60k_finetuned_robertamodel")  
-tokenizer.save_pretrained("./data./60k_finetuned_robertamodel") 
+model.save_pretrained("./data/60k_finetuned_robertamodel")  
+tokenizer.save_pretrained("./data/60k_finetuned_robertamodel") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
     pickle.dump(label_encoder, f)
 
-# Affichage des courbes de loss et d'accuracy pendant l'entraînement
-import matplotlib.pyplot as plt
-import json
-import os
+
 
 # Charger les logs de l'entraînement
 log_history = trainer.state.log_history
