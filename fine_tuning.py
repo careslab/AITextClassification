@@ -9,7 +9,7 @@ import json
 import os
 
 # 1. Charger et préparer les données
-df = pd.read_csv("./data/60k_voice_command.csv")  # Remplace le chemin par le bon fichier CSV
+df = pd.read_csv("./data/testing_file.csv")  # Remplace le chemin par le bon fichier CSV
 
 # Encoder les labels (catégories) en entiers
 label_encoder = LabelEncoder()
@@ -19,7 +19,7 @@ df["label"] = label_encoder.fit_transform(df["label"])
 dataset = Dataset.from_pandas(df[["text", "label"]])
 
 # Diviser les données en train et test (90% train, 10% test)
-dataset = dataset.train_test_split(test_size=0.1, shuffle=True, seed=42)
+dataset = dataset.train_test_split(test_size=0.2, shuffle=True, seed=42)
 
 # 2. Tokenisation des textes
 tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")

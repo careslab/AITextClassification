@@ -51,7 +51,7 @@ csv_filename = f"{clean_model_name}_results.csv"
 incorrect_filename = f"{clean_model_name}_incorrect_predictions.csv"
 incorrect_file = open(incorrect_filename, mode='w', newline='')
 incorrect_writer = csv.writer(incorrect_file)
-incorrect_writer.writerow(["Prompt", "Expected"])
+incorrect_writer.writerow(["Prompt", "Expected","Answered"])
 
 with open(csv_filename, mode='w', newline='') as file:
     writer = csv.writer(file)
@@ -83,7 +83,7 @@ with open(csv_filename, mode='w', newline='') as file:
             if response == response_list[i]:
                 accuracy_cnt += 1
             else:
-                incorrect_writer.writerow([prompt, response_list[i]])
+                incorrect_writer.writerow([prompt, response_list[i],response])
 
         time_avg = time_cnt / len(prompt_list)
         accuracy = (accuracy_cnt * 100) / len(prompt_list)
