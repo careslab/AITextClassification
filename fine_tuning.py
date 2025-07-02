@@ -22,7 +22,7 @@ dataset = Dataset.from_pandas(df[["text", "label"]])
 dataset = dataset.train_test_split(test_size=0.1, shuffle=True, seed=42)
 
 # 2. Tokenisation des textes
-tokenizer = AutoTokenizer.from_pretrained("distilroberta-base")
+tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
 
 # Fonction de tokenisation des textes
 def tokenize(batch):
@@ -33,7 +33,7 @@ tokenized_dataset = dataset.map(tokenize, batched=True)
 
 # 3. Charger le modèle pour la classification
 model = AutoModelForSequenceClassification.from_pretrained(
-    "distilroberta-base",
+    "distilbert-base-uncased",
     num_labels=len(label_encoder.classes_)  
 )
 
@@ -80,8 +80,8 @@ if hasattr(trainer, "early_stopping") or any(
         print("Training was stopped because of the early stopping.")
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./data/60k_finetuned_robertamodel")  
-tokenizer.save_pretrained("./data/60k_finetuned_robertamodel") 
+model.save_pretrained("./data/60k_finetuned_bertmodel")  
+tokenizer.save_pretrained("./data/60k_finetuned_bertmodel") 
 import pickle
 with open("label_encoder.pkl", "wb") as f:
     pickle.dump(label_encoder, f)
