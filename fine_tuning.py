@@ -7,9 +7,10 @@ from sklearn.metrics import accuracy_score
 import matplotlib.pyplot as plt
 import json
 import os
+import pickle
 
 # 1. Charger et préparer les données
-df = pd.read_csv("./data/testing_file.csv")  # Remplace le chemin par le bon fichier CSV
+df = pd.read_csv("./data/w_cat/tools/tools.csv")  # Remplace le chemin par le bon fichier CSV
 
 # Encoder les labels (catégories) en entiers
 label_encoder = LabelEncoder()
@@ -22,7 +23,7 @@ dataset = Dataset.from_pandas(df[["text", "label"]])
 dataset = dataset.train_test_split(test_size=0.2, shuffle=True, seed=42)
 
 # 2. Tokenisation des textes
-tokenizer = AutoTokenizer.from_pretrained("distilbert-base-uncased")
+tokenizer = AutoTokenizer.from_pretrained("distilroberta-base")
 
 # Fonction de tokenisation des textes
 def tokenize(batch):
@@ -80,9 +81,9 @@ if hasattr(trainer, "early_stopping") or any(
         print("Training was stopped because of the early stopping.")
 
 # 8. Sauvegarder le modèle fine-tuné
-model.save_pretrained("./data/60k_finetuned_bertmodel")  
+model.save_pretrained("./data/w_cat/tools/tools_roberta")  
 tokenizer.save_pretrained("./data/60k_finetuned_bertmodel") 
-import pickle
+
 with open("label_encoder.pkl", "wb") as f:
     pickle.dump(label_encoder, f)
 
