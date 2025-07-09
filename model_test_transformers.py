@@ -6,18 +6,18 @@ import csv
 import pickle
 import pandas as pd
 
-# List definition and verification
+# Demande le chemin du fichier CSV à l'utilisateur
+csv_file_path = input("Chemin du fichier CSV à tester : ").strip()
 
-def load_list_from_csv(csv_path, size=100):
-    df = pd.read_csv(csv_path)
-    sampled_df = df.sample(n=size)
-    prompt_list = sampled_df['text'].tolist()
-    response_list = sampled_df['label'].tolist()
+def load_list_from_csv(csv_path, size=None):
+    df = pd.read_csv(csv_path, header=None)
+    if size is not None:
+        df = df.sample(n=size)
+    prompt_list = df[0].tolist()
+    response_list = df[1].tolist()
     return prompt_list, response_list
 
-csv_file_path = "./data/training_file.csv"
 prompt_list, response_list = load_list_from_csv(csv_file_path)
-
 
 if len(prompt_list) != len(response_list):
     sys.exit("The prompt and response lists must be the same length.")
@@ -26,7 +26,7 @@ if len(prompt_list) != len(response_list):
 nb_of_test = int(input("How many test do you want to do on this model ?\n"))
 
 # Load model and tokenizer
-model_path = "./data/60k_finetuned_bertmodel"                                                                                                     ##### changes here the size!!!!
+model_path = "./data/60k_finetuned_bertmodel"  # Modifie ici si besoin
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
@@ -43,15 +43,14 @@ def generate_with_transformers(prompt):
     label_id = int(result['label'].split("_")[-1]) if result['label'].startswith("LABEL_") else int(result['label'])
     return id2label[label_id]
 
-
 # Prepare CSV file
-clean_model_name = "60k_finetuned_bertmodel"                                                                                                     ##### changes here the size!!!!
+clean_model_name = "60k_finetuned_bertmodel"
 csv_filename = f"{clean_model_name}_results.csv"
 
 incorrect_filename = f"{clean_model_name}_incorrect_predictions.csv"
 incorrect_file = open(incorrect_filename, mode='w', newline='')
 incorrect_writer = csv.writer(incorrect_file)
-incorrect_writer.writerow(["Prompt", "Expected","Answered"])
+incorrect_writer.writerow(["Prompt", "Expected", "Answered"])
 
 with open(csv_filename, mode='w', newline='') as file:
     writer = csv.writer(file)
@@ -66,7 +65,6 @@ with open(csv_filename, mode='w', newline='') as file:
         accuracy_cnt = 0
 
         for i in range(len(prompt_list)):
-
             if prompt_list[i].lower() == 'exit':
                 print("Exiting the loop. Goodbye!")
                 break
@@ -75,15 +73,14 @@ with open(csv_filename, mode='w', newline='') as file:
             send_time = time.time()
             response = generate_with_transformers(prompt)
             receive_time = time.time()
-            #print(response)
 
-            elapse_time = receive_time - send_time 
+            elapse_time = receive_time - send_time
             time_cnt += elapse_time
 
             if response == response_list[i]:
                 accuracy_cnt += 1
             else:
-                incorrect_writer.writerow([prompt, response_list[i],response])
+                incorrect_writer.writerow([prompt, response_list[i], response])
 
         time_avg = time_cnt / len(prompt_list)
         accuracy = (accuracy_cnt * 100) / len(prompt_list)
