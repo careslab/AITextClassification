@@ -46,7 +46,7 @@ model = AutoModelForSequenceClassification.from_pretrained(
 # 4. Définir les arguments d'entraînement
 training_args = TrainingArguments(
     output_dir=save_dir,
-    evaluation_strategy="epoch",
+    eval_strategy="epoch",
     logging_strategy="epoch",
     save_strategy="epoch",
     num_train_epochs=5,
