@@ -1,7 +1,7 @@
 import csv
 import re
 
-input_file = "./data/NV_command.csv"
+input_file = "./data/w_cat/patient/patient_test.csv"
 
 def clean_text(text):
     # Garde uniquement les lettres (majuscules/minuscules), les espaces et les virgules

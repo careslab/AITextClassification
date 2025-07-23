@@ -5,6 +5,7 @@ import time
 import csv
 import pickle
 import pandas as pd
+import os
 
 # Demande le chemin du fichier CSV à l'utilisateur
 csv_file_path = input("Chemin du fichier CSV à tester : ").strip()
@@ -26,15 +27,14 @@ if len(prompt_list) != len(response_list):
 nb_of_test = int(input("How many test do you want to do on this model ?\n"))
 
 # Load model and tokenizer
-model_path = "./data/60k_finetuned_bertmodel"  # Modifie ici si besoin
+model_path = input("Chemin du modèle à tester : ").strip()  
 tokenizer = AutoTokenizer.from_pretrained(model_path)
 model = AutoModelForSequenceClassification.from_pretrained(model_path)
 
-with open("label_encoder.pkl", "rb") as f:
+with open(f"{model_path}/label_encoder.pkl", "rb") as f:
     label_encoder = pickle.load(f)
 
 id2label = dict(enumerate(label_encoder.classes_))
-label2id = {v: k for k, v in id2label.items()}
 
 classifier = pipeline("text-classification", model=model, tokenizer=tokenizer, device=0 if torch.cuda.is_available() else -1)
 
@@ -43,11 +43,15 @@ def generate_with_transformers(prompt):
     label_id = int(result['label'].split("_")[-1]) if result['label'].startswith("LABEL_") else int(result['label'])
     return id2label[label_id]
 
-# Prepare CSV file
-clean_model_name = "60k_finetuned_bertmodel"
-csv_filename = f"{clean_model_name}_results.csv"
 
-incorrect_filename = f"{clean_model_name}_incorrect_predictions.csv"
+# Récupère le dossier parent et le nom du dossier du fichier CSV
+csv_dir = os.path.dirname(os.path.abspath(csv_file_path))
+csv_folder_name = os.path.basename(csv_dir)
+
+# Utilise le nom du dossier pour nommer les fichiers de résultats
+csv_filename = os.path.join(csv_dir, f"{csv_folder_name}_results.csv")
+incorrect_filename = os.path.join(csv_dir, f"{csv_folder_name}_incorrect_predictions.csv")
+
 incorrect_file = open(incorrect_filename, mode='w', newline='')
 incorrect_writer = csv.writer(incorrect_file)
 incorrect_writer.writerow(["Prompt", "Expected", "Answered"])
@@ -77,7 +81,7 @@ with open(csv_filename, mode='w', newline='') as file:
             elapse_time = receive_time - send_time
             time_cnt += elapse_time
 
-            if response == response_list[i]:
+            if response.strip() == str(response_list[i]).strip():
                 accuracy_cnt += 1
             else:
                 incorrect_writer.writerow([prompt, response_list[i], response])
