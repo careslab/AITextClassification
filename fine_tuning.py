@@ -91,24 +91,17 @@ print(f"✅ Modèle et tokenizer sauvegardés dans le dossier : {save_dir}")
 log_history = trainer.state.log_history
 epochs = [entry["epoch"] for entry in log_history if "epoch" in entry and "loss" in entry]
 train_loss = [entry["loss"] for entry in log_history if "epoch" in entry and "loss" in entry]
+eval_loss = [entry["eval_loss"] for entry in log_history if "eval_loss" in entry]
 eval_acc = [entry["eval_accuracy"] for entry in log_history if "eval_accuracy" in entry]
-eval_epochs = [entry["epoch"] for entry in log_history if "eval_accuracy" in entry]
+eval_epochs = [entry["epoch"] for entry in log_history if "eval_loss" in entry]
 
-plt.figure(figsize=(10, 5))
-plt.plot(epochs, train_loss, label="Train Loss", marker="o")
-plt.xlabel("Epoch")
-plt.ylabel("Loss")
-plt.title("Courbe de perte (Train)")
-plt.legend()
-plt.grid(True)
-plt.show()
-
-plt.figure(figsize=(10, 5))
+plt.figure(figsize=(10, 6))
+plt.plot(epochs, train_loss, label="Train Loss", marker="o", color="blue")
+plt.plot(eval_epochs, eval_loss, label="Eval Loss", marker="o", color="red")
 plt.plot(eval_epochs, eval_acc, label="Eval Accuracy", marker="o", color="green")
 plt.xlabel("Epoch")
-plt.ylabel("Accuracy")
-plt.title("Précision sur le jeu de validation")
+plt.ylabel("Value")
+plt.title("Learning curves : Train Loss, Eval Loss & Eval Accuracy")
 plt.legend()
 plt.grid(True)
 plt.show()
-

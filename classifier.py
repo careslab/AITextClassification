@@ -1,12 +1,12 @@
 from classification import Classification
-import time
+#import time
 
 clf = Classification()
 
-command = input("Enter your command : ")
+#command = input("Enter your command : ")
 
-start = time.time()
+#start = time.time()
 clf.handle_command(command)
-end = time.time()
+#end = time.time()
 
-print(f"Response time : {end - start:.3f} s")
+#print(f"Response time : {end - start:.3f} s")#

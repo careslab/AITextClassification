@@ -11,11 +11,12 @@ import os
 from sklearn.preprocessing import LabelEncoder
 import numpy as np
 import sys
+import matplotlib.pyplot as plt
 
 class IterativeFineTuner:
     def __init__ (self):
-        self.training_filename = "./data/training_file.csv"
-        self.testing_filename = "./data/testing_file.csv"
+        self.training_filename = "./data/wo_cat/training_file.csv"
+        self.testing_filename = "./data/wo_cat/command_dataframe_medium.csv"
         self.model_name = None
         self.model_dir = None
         self.learning_rate = None
@@ -125,6 +126,28 @@ class IterativeFineTuner:
             print("💾 Model, tokenizer, and label encoder saved successfully ✅")
         except Exception as e:
             raise ValueError(f"❌ Error saving model or tokenizer: {e}")
+
+        # Plot training history
+        self.plot_training_history(trainer)
+
+    def plot_training_history(self, trainer):
+        log_history = trainer.state.log_history
+
+        epochs = [entry["epoch"] for entry in log_history if "epoch" in entry and "loss" in entry]
+        train_loss = [entry["loss"] for entry in log_history if "epoch" in entry and "loss" in entry]
+        eval_loss = [entry["eval_loss"] for entry in log_history if "eval_loss" in entry]
+        eval_acc = [entry["eval_accuracy"] for entry in log_history if "eval_accuracy" in entry]
+        eval_epochs = [entry["epoch"] for entry in log_history if "eval_accuracy" in entry]
+
+        plt.figure(figsize=(10, 6))
+        plt.plot(epochs, train_loss, label="Train Loss", marker="o", color="blue")
+        plt.plot(eval_epochs, eval_loss, label="Eval Loss", marker="o", color="red")
+        plt.plot(eval_epochs, eval_acc, label="Eval Accuracy", marker="o", color="green")
+        plt.xlabel("Epoch")
+        plt.title("Courbes d'apprentissage")
+        plt.legend()
+        plt.grid(True)
+        plt.show()
 
     def load_list_from_csv(self , size=100):
         # Check if the testing file exists
